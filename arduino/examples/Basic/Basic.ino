@@ -4,11 +4,12 @@ example to configure and get data from AD7173 ADC
 =================================================
 */
 #include <SPI.h>
-#include <AD7173.h>
+#include "AD7173.h"
+
 
 void setup() {
-	/* initiate serial communication */
-	Serial.begin(230400);
+       /* initiate serial communication */
+	Serial.begin(9600);
 
 	/* initiate ADC, returns true if the device ID is valid */
 	AD7173.init();
@@ -20,8 +21,8 @@ void setup() {
 	/* enable channel 0 and channel 1 and connect each to 2 analog inputs for bipolar input */
 	/* CH0 - CH15 */
 	/* AIN0 - AIN16, REF_POS, REF_NEG, TEMP_SENSOR_POS, TEMP_SENSOR_NEG */
-	AD7173.enable_channel(CH0, true, AIN0, AIN1);
-	AD7173.enable_channel(CH1, true, AIN2, AIN3);
+	AD7173.enable_channel(CH0, true, AIN9, AIN11);
+//	AD7173.enable_channel(CH1, true, AIN2, AIN3);
 
 	/* set the ADC filter samplingrate to 1007 Hz*/
 	/* FILTER0 - FILTER7 */
@@ -52,12 +53,17 @@ byte data[3];
 void loop() {
 	/* when ADC conversion is finished */
 	if (DATA_READY) {
+  
 		/* get ADC conversion result */
 		AD7173.get_data(data);
 
 		/* send result via serial */
-		Serial.print(data[0], HEX);
-		Serial.print(data[1], HEX);
-		Serial.println(data[2], HEX);
+if(data[0]!=0||data[1]!=0||data[2]!=0){
+		Serial.print(data[0]);
+		Serial.print(data[1]);
+		Serial.println(data[2]);
+}
 	}
+
+
 }
