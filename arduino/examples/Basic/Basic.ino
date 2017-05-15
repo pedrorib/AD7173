@@ -6,13 +6,23 @@ example to configure and get data from AD7173 ADC
 #include <SPI.h>
 #include "AD7173.h"
 
+union mv{
+  unsigned long int valor;
+  byte data[3];
+};
+
+double soma=0;
+mv med;
+byte data_aux[3];
 
 void setup() {
        /* initiate serial communication */
 	Serial.begin(9600);
-
+        //SPI.setClockDivider(SPI_CLOCK_DIV128);
 	/* initiate ADC, returns true if the device ID is valid */
 	AD7173.init();
+SPI.setClockDivider(SPI_CLOCK_DIV128);
+
 
 	/* reset ADC registers to the default state */
 	AD7173.reset();
@@ -21,7 +31,7 @@ void setup() {
 	/* enable channel 0 and channel 1 and connect each to 2 analog inputs for bipolar input */
 	/* CH0 - CH15 */
 	/* AIN0 - AIN16, REF_POS, REF_NEG, TEMP_SENSOR_POS, TEMP_SENSOR_NEG */
-	AD7173.enable_channel(CH0, true, AIN9, AIN11);
+	AD7173.enable_channel(CH0, true, AIN14);
 //	AD7173.enable_channel(CH1, true, AIN2, AIN3);
 
 	/* set the ADC filter samplingrate to 1007 Hz*/
@@ -33,7 +43,7 @@ void setup() {
 	/* set the ADC setup coding to BIPLOAR output*/
 	/* SETUP0 - SETUP7 */
 	/* BIPOLAR, UNIPOLAR */
-	AD7173.set_setup_coding_mode(SETUP0, BIPOLAR);
+	AD7173.set_setup_coding_mode(SETUP0, UNIPOLAR);
 
 	/* set the ADC data mode */
 	/* CONTINUOUS_READ_MODE, SINGLE_CONVERSION_MODE, CONTINUOUS_CONVERSION_MODE */
@@ -44,26 +54,31 @@ void setup() {
 	AD7173.set_clock_mode(INTERNAL_CLOCK);
 
 	/* wait for ADC */
-	delay(10);
+	//delay(10);
+                AD7173.resync();
+		AD7173.read_register_public(0x07,data_aux,1);
 }
 
 /* ADC conversion data */
-byte data[3];
-
 void loop() {
+  //delay(100);
 	/* when ADC conversion is finished */
-	if (DATA_READY) {
-  
-		/* get ADC conversion result */
-		AD7173.get_data(data);
+	//if (DATA_READY) {
+		AD7173.read_register_public(0x22,data_aux,2);
 
 		/* send result via serial */
-if(data[0]!=0||data[1]!=0||data[2]!=0){
-		Serial.print(data[0]);
-		Serial.print(data[1]);
-		Serial.println(data[2]);
-}
-	}
 
+med.data[1]=data_aux[1];
+med.data[2]=data_aux[0];
+
+//soma=(double)3.3*(double)med.valor/(double)16777216;
+
+Serial.print(data_aux[0],HEX);
+Serial.print(" ");
+Serial.println(data_aux[1],HEX);
+//Serial.print(" ");
+//Serial.println(data_aux[2],HEX);
+	//}
+//while(1);
 
 }

@@ -143,7 +143,7 @@ int AD7173Class::read_register_public(byte reg, byte *value, int read_len) {
 		return 1;
 	}
 	/* send communication register id 0x00 */
-	//SPI.transfer(0x00);
+	SPI.transfer(0x00);
 	/* send read command to the desired register 0x00 - 0xFF */
 	SPI.transfer(0x40 | reg);
 	/* read the desired amount of bytes */
