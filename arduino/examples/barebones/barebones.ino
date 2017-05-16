@@ -26,16 +26,19 @@ void loop() {
   AD7173.resync();
   //AD7173.reset();
   //AD7173.read_register_public(0x07,data_aux,1);
-  AD7173.read_register_public(0x07,data_aux,3);
+  //AD7173.set_setup_coding_mode(SETUP0, UNIPOLAR);
+  //AD7173.set_data_mode(CONTINUOUS_CONVERSION_MODE);
+  //delay(10);
+  AD7173.read_register_public(0x04,data_aux,3);
   med.data[0]=data_aux[2];
   med.data[1]=data_aux[1];
   med.data[2]=data_aux[0];
-  Serial.print(data_aux[0],HEX);
-  Serial.print(" ");
-  Serial.print(data_aux[1],HEX),
-  Serial.print(" ");
-  Serial.println(data_aux[2],HEX);
+  //Serial.print(data_aux[0],HEX);
+  //Serial.print(" ");
+  //Serial.print(data_aux[1],HEX),
+  //Serial.print(" ");
+  //Serial.println(data_aux[2],HEX);
   //Serial.println(med.valor);
-  //soma=(double)med.valor/(double)16777216*(double)5;
-  //Serial.println(soma,9);
+  soma=(double)med.valor/(double)16777216*(double)5;
+  Serial.println(soma,9);
 }
