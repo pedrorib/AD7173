@@ -301,6 +301,8 @@ public:
 	int get_current_data_channel(byte &);
 
       	int read_register_public(byte, byte *, int);
+      
+      	int write_register_public(byte, byte *, int);
 
 
 private:

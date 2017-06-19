@@ -94,6 +94,43 @@ int AD7173Class::write_register(byte reg, byte *value, int write_len) {
 	return 0;
 }
 
+int AD7173Class::write_register_public(byte reg, byte *value, int write_len) {
+	/* when desired register is invalid */
+	if (reg < 0x00 || reg > 0x3F) {
+		/* when debug enabled */
+		if (DEBUG_ENABLED) {
+			Serial.print("write_register: register out of range [ ");
+			this->print_byte(reg);
+			Serial.println(" ]");
+		}
+		/* return error code */
+		return 1;
+	}
+	/* send communication register id 0x00 */
+	SPI.transfer(0x00);
+	/* send write command to the desired register 0x00 - 0xFF */
+	SPI.transfer(0x00 | reg);
+	/* write the desired amount of bytes */
+	for (int i = 0; i < write_len; i++) {
+		SPI.transfer(value[i]);
+	}
+	/* when debug enabled */
+	if (DEBUG_ENABLED) {
+		Serial.print("write_register: wrote [ ");
+		for (int i = 0; i < write_len; i++) {
+			this->print_byte(value[i]);
+		}
+		Serial.print("] to reg [ ");
+		this->print_byte(reg);
+		Serial.println("]");
+	}
+	/* TODO: find out correct delay */
+	delay(TRANSFER_DELAY);
+	/* return error code */
+	return 0;
+}
+
+
 int AD7173Class::read_register(byte reg, byte *value, int read_len) {
 	/* when desired register is invalid */
 	if (reg < 0x00 || reg > 0x3F) {
